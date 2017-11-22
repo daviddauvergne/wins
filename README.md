@@ -4,7 +4,7 @@ V1.0.0
 
 ## install
 
-	npm install
+	npm install https://github.com/daviddauvergne/wins.git
 
 ## Arguments '{JSON data}'
 

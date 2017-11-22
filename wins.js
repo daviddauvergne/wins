@@ -3,7 +3,7 @@
 
 ## install
 
-	npm install
+	npm install npm install https://github.com/daviddauvergne/wins.git
 
 */
 const path = require('path');
