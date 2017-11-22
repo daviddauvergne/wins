@@ -1,0 +1,17 @@
+{
+	"name": "wins",
+	"version": "1.0.0",
+	"description": "wins is not service",
+	"main": "wins.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/daviddauvergne/wins.git"
+	},
+	"author": "David Dauvergne",
+	"license": "MIT",
+	"dependencies": {
+		"chokidar": "^1.7.0",
+		"redis": "^2.8.0",
+		"winston": "^2.4.0"
+	}
+}
