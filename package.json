@@ -12,6 +12,6 @@
 	"dependencies": {
 		"chokidar": "^1.7.0",
 		"redis": "^2.8.0",
-		"winston": "^2.4.0"
+		"winslogger": "git+https://github.com/daviddauvergne/winslogger.git"
 	}
 }
