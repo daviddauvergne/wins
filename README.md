@@ -33,7 +33,6 @@ return logger
 
 ```javascript
 var logger = wins.init({
-	winsID: 'XXXXX', // wins identify
 	fncPromise : function(data) {// return a promise
 		return new Promise(function (resolve, reject) {
 			// ...
@@ -52,4 +51,27 @@ var logger = wins.init({
 		}
 	}
 });
+```
+## example
+
+### start with pm2 (ecosystem.config.js)
+
+```javascript
+module.exports = {
+	apps : [{
+		name:   "win_test",
+		script: "./test.js",
+		args:   toArgs({
+			winsID:     	"TEST",
+			watchdir:     DIRS.watch_dir,
+			log: {
+				type:       "file",
+				dir:        DIRS.logs
+			},
+			data: {
+				usePolling: false // NFS
+			}
+		})
+	}]
+};
 ```
