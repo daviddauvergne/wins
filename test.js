@@ -1,12 +1,34 @@
 /*
-node test.js '{"watchdir":"/path/to/testDir","log":{"type":"file","dir":"/path/to/logDir"}}'
+
+## example
+
+### start with pm2 (ecosystem.config.js)
+
+```javascript
+module.exports = {
+	apps : [{
+		name:   "win_test",
+		script: "./test.js",
+		args:   toArgs({
+			winsID:     	"TEST",
+			watchdir:     DIRS.watch_dir,
+			log: {
+				type:       "file",
+				dir:        DIRS.logs
+			},
+			data: {
+				usePolling: false // NFS
+			}
+		})
+	}]
+};
+```
 */
 const wins = require('./wins');
 
 var argv = wins.getArguments();
 
 var logger = wins.init({
-	winsID: 'XXXXX', // wins identify
 	fncPromise : function(data) {// return a promise
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
@@ -15,10 +37,11 @@ var logger = wins.init({
 			}, 500);
 		});
 	},
-	removeFiles: false,
+	removeFiles: true,
 	watcher : {// [chokidar module](https://github.com/paulmillr/chokidar)
-		path: argv.watchdir,//  dirs to be watched recursively, or glob patterns
-		options : {}, // chokidar option
+		options : { // chokidar option
+			usePolling: argv.data.usePolling // NFS
+		},
 		events : {
 			add: function(path, stats){
 				wins.addPile(path);

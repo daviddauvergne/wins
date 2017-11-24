@@ -3,7 +3,7 @@
 
 ## install
 
-	npm install npm install https://github.com/daviddauvergne/wins.git
+	npm install https://github.com/daviddauvergne/wins.git
 
 */
 const path = require('path');
@@ -45,7 +45,7 @@ var pathExist = function(p){
 	errorCommand({message:'Path doesn\'t exist: '+p});
 };
 
-var requiredArgs = ['watchdir','log'];
+var requiredArgs = ['winsID','watchdir','log'];
 var logTypeValid = ['file'];
 var eventWatcherValid = ['add', 'addDir', 'change', 'unlink', 'unlinkDir', 'ready', 'raw', 'error'];
 
@@ -215,7 +215,6 @@ return logger
 
 ```javascript
 var logger = wins.init({
-	winsID: 'XXXXX', // wins identify
 	fncPromise : function(data) {// return a promise
 		return new Promise(function (resolve, reject) {
 			// ...
@@ -237,10 +236,8 @@ var logger = wins.init({
 ```
 */
 	init: function(definition){
-		if(!definition.winsID)
-			errorCommand({message:'winsID undefined'});
 
-		winsID = definition.winsID;
+		winsID = argv.winsID;
 
 		loggerInit();
 
