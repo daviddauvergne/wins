@@ -33,44 +33,43 @@ for (var i = 0; i < 2; i++) {
 }
 command.push("'{JSON data}'");
 command = command.join(' ');
-var errorCommand = function(err){
+var errorCommand = function (err) {
 	console.log('Usage: ' + command + '\n');
 	console.log(err.message);
 	process.exit(1);
 };
 
-var pathExist = function(p){
-	if(fs.existsSync(p))
-		return true;
-	errorCommand({message:'Path doesn\'t exist: '+p});
+var pathExist = function (p) {
+	if (fs.existsSync(p)) return true;
+	errorCommand({message: 'Path doesn\'t exist: ' + p});
 };
 
-var requiredArgs = ['winsID','watchdir','log'];
+var requiredArgs = ['winsID', 'watchdir', 'log'];
 var logTypeValid = ['file'];
 var eventWatcherValid = ['add', 'addDir', 'change', 'unlink', 'unlinkDir', 'ready', 'raw', 'error'];
 
 try {
 	argv = JSON.parse(argv);
-	requiredArgs.forEach(function(arg){
-		if(!argv[arg])
-			errorCommand({message:'Missing required argument: '+arg});
+	requiredArgs.forEach(function (arg) {
+		if (!argv[arg]) errorCommand({message: 'Missing required argument: ' + arg});
 	});
 
 	// watchdir exist
-	if(pathExist(argv.watchdir)){
-		if(argv.savedir){// savedir exist
+	if (pathExist(argv.watchdir)) {
+		if (argv.savedir) { // savedir exist
 			pathExist(argv.savedir);
 		}
 		// log.tyoe exist
-		if(!argv.log.type)
-			errorCommand({message:'Log type undefined'});
+		if (!argv.log.type) {
+			errorCommand({message: 'Log type undefined'});
+		}
 
-		if(logTypeValid.indexOf(argv.log.type) === -1)
-			errorCommand({message:'Log type invalid'});
+		if (logTypeValid.indexOf(argv.log.type) === -1) {
+			errorCommand({message: 'Log type invalid'});
+		}
 
-		if(argv.log.type=='file'){
-			if(!argv.log.dir)
-				errorCommand({message:'Log dir undefined'});
+		if (argv.log.type === 'file') {
+			if (!argv.log.dir) errorCommand({message: 'Log dir undefined'});
 
 			pathExist(argv.log.dir);
 		}
@@ -91,23 +90,21 @@ var timestamp = 0;
 
 var pile = [];
 
-var next = function(){
+var next = function () {
 	pile.shift();
-	if(pile.length>=1)
-		looper();
+	if (pile.length >= 1) looper();
 };
 
-var looper = function(){
-	fncPromise(pile[0]).then(function(data){
-		if(removeFiles){
-			data.forEach(function(file){
-				fs.unlink(file,function(errUnlink){
-					if(errUnlink)
-						logger.error(errUnlink);
+var looper = function () {
+	fncPromise(pile[0]).then(function (data) {
+		if (removeFiles) {
+			data.forEach(function (file) {
+				fs.unlink(file, function (errUnlink) {
+					if (errUnlink) logger.error(errUnlink);
 				});
 			});
 		} else {
-			clientRedis.set(winsID,data);
+			clientRedis.set(winsID, data);
 		}
 		next();
 	}).catch(function (err) {
@@ -116,29 +113,28 @@ var looper = function(){
 	});
 };
 
-var addPile = function(val){
+var addPile = function (val) {
 	pile.push(val);
-	if(pile.length===1)
-		looper();
+	if (pile.length === 1) looper();
 };
 
-var bootstrap = function(definition){
-	fs.readdir(argv.watchdir, function(errfile, files) {
-		if (errfile){
+var bootstrap = function (definition) {
+	fs.readdir(argv.watchdir, function (errfile, files) {
+		if (errfile) {
 			logger.error(errfile);
 		} else {
-			files.forEach(function(file){
+			files.forEach(function (file) {
 				var fullPathFile = argv.watchdir + '/' + file;
-				fs.stat(fullPathFile, function(errStat, stat) {
-					if(errStat){
+				fs.stat(fullPathFile, function (errStat, stat) {
+					if (errStat) {
 						logger.error(errStat);
 					} else {
-						if(!removeFiles){
-							if(stat.mtime.getTime()>timestamp){
-								definition.watcher.events.add(fullPathFile,stat);
+						if (!removeFiles) {
+							if (stat.mtime.getTime() > timestamp) {
+								definition.watcher.events.add(fullPathFile, stat);
 							}
 						} else {
-							definition.watcher.events.add(fullPathFile,stat);
+							definition.watcher.events.add(fullPathFile, stat);
 						}
 					}
 				});
@@ -155,7 +151,7 @@ module.exports = {
 Get start process Arguments
 
 */
-	getArguments: function(){
+	getArguments: function () {
 		return argv;
 	},
 
@@ -195,60 +191,67 @@ var logger = wins.init({
 });
 ```
 */
-	init: function(definition){
-
+	init: function (definition) {
 		winsID = argv.winsID;
 
-		logger = require('winslogger')(winsID,argv.log);
+		logger = require('winslogger')(winsID, argv.log);
 
-		if(!definition.fncPromise)
-			errorCommand({message:'fncPromise undefined'});
+		if (!definition.fncPromise) {
+			errorCommand({message: 'fncPromise undefined'});
+		}
 
-		if(typeof definition.fncPromise != 'function')
-			errorCommand({message:'fncPromise is not a function'});
+		if (typeof definition.fncPromise !== 'function') {
+			errorCommand({message: 'fncPromise is not a function'});
+		}
 
 		fncPromise = definition.fncPromise;
 
-		if(definition.removeFiles === undefined)
-			errorCommand({message:'removeFiles undefined'});
+		if (definition.removeFiles === undefined) {
+			errorCommand({message: 'removeFiles undefined'});
+		}
 
-		if(typeof definition.removeFiles != 'boolean')
-			errorCommand({message:'removeFiles is not a boolean'});
+		if (typeof definition.removeFiles !== 'boolean') {
+			errorCommand({message: 'removeFiles is not a boolean'});
+		}
 
 		removeFiles = definition.removeFiles;
 
-		if(typeof definition.watcher.options != 'object')
-			errorCommand({message:'watcher.options is not an object'});
+		if (typeof definition.watcher.options !== 'object') {
+			errorCommand({message: 'watcher.options is not an object'});
+		}
 
 		definition.watcher.options.ignoreInitial = true;
-		var watcher = chokidar.watch(argv.watchdir,definition.watcher.options);
+		var watcher = chokidar.watch(argv.watchdir, definition.watcher.options);
 
 		var eventKeys = Object.keys(definition.watcher.events);
 
-		if(eventKeys.length===0)
-			errorCommand({message:'watcher.events as no event'});
+		if (eventKeys.length === 0) {
+			errorCommand({message: 'watcher.events as no event'});
+		}
 
-		eventKeys.forEach(function(ev){
-			if(eventWatcherValid.indexOf(ev) === -1){
-				errorCommand({message:'watcher.events.' + ev + ' is not a valid event'});
+		eventKeys.forEach(function (ev) {
+			if (eventWatcherValid.indexOf(ev) === -1) {
+				errorCommand({message: 'watcher.events.' + ev + ' is not a valid event'});
 			} else {
-				if(typeof definition.watcher.events[ev] != 'function')
-					errorCommand({message:'watcher.events.' + ev + ' is not a function'});
-
-				watcher.on(ev,definition.watcher.events[ev]);
+				if (typeof definition.watcher.events[ev] !== 'function') {
+					errorCommand({message: 'watcher.events.' + ev + ' is not a function'});
+				}
+				watcher.on(ev, definition.watcher.events[ev]);
 			}
 		});
 
-		if(!removeFiles){
-			redis = require("redis");
+		if (!removeFiles) {
+			redis = require('redis');
 			clientRedis = redis.createClient();
-			clientRedis.on("error", function (error) {
+			clientRedis.on('error', function (error) {
 				errorCommand(error);
 			});
-			clientRedis.on('connect', function() {
-				clientRedis.get(winsID, function(err, reply) {
-					if(reply)
-						timestamp = reply;
+			clientRedis.on('connect', function () {
+				clientRedis.get(winsID, function (err, reply) {
+					if (err) {
+						//
+					}
+					if (reply) timestamp = reply;
 					bootstrap(definition);
 				});
 			});
