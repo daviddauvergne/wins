@@ -221,7 +221,11 @@ var logger = wins.init({
 		}
 
 		definition.watcher.options.ignoreInitial = true;
-		var watcher = chokidar.watch(argv.watchdir, definition.watcher.options);
+		var dirToWatch = argv.watchdir;
+		if (argv.files) {
+			dirToWatch = path.join(dirToWatch, argv.files);
+		}
+		var watcher = chokidar.watch(dirToWatch, definition.watcher.options);
 
 		var eventKeys = Object.keys(definition.watcher.events);
 
